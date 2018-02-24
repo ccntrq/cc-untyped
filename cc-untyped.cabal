@@ -27,7 +27,8 @@ library
       parsec == 3.1.13.0
   exposed-modules:
       Parser,
-      Term
+      Term,
+      Printer
   other-modules:
       Paths_cc_untyped
   default-language: Haskell2010

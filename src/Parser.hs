@@ -48,7 +48,7 @@ parseNonApp =
 
 parseAbs :: LCParser
 parseAbs = do
-  char '\\' <|> (lambda >> space)
+  char '\\'
   v <- parseVarName
   modifyState (v :)
   char '.'
@@ -78,8 +78,6 @@ parseVarName = many1 $ letter <|> char '\''
 -- | parser helper for parens.
 parens :: Parsec String u a -> Parsec String u a
 parens = between (char '(') (char ')')
-
-lambda = char 'l' >> char 'a' >> char 'm' >> char 'b' >> char 'd' >> char 'a'
 
 -- | A helper to create our info annotations from parsecs SourcePos type
 infoFrom :: SourcePos -> Info

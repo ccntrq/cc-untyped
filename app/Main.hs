@@ -1,7 +1,7 @@
 module Main where
 
 import           Parser
-import           Printer
+import           Syntax
 
 main :: IO ()
 main = do

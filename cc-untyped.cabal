@@ -28,7 +28,7 @@ library
   exposed-modules:
       Parser,
       Term,
-      Printer
+      Syntax
   other-modules:
       Paths_cc_untyped
   default-language: Haskell2010

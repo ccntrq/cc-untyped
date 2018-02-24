@@ -1,4 +1,10 @@
-module Printer where
+module Syntax
+  ( printTerm
+  , fmtTerm
+  , termSubstTop
+  , Binding(..)
+  , Context
+  ) where
 
 import           Term
 
@@ -8,6 +14,43 @@ data Binding =
 
 type Context = [(String, Binding)]
 
+{-
+ - shifting
+ -}
+termShift :: Int -> Term -> Term
+termShift d = termShiftAbove d 0
+
+termShiftAbove :: Int -> Int -> Term -> Term
+termShiftAbove d =
+  tmMap
+    (\fi c x n ->
+       if x >= c
+         then TmVar fi (x + d) (n + d)
+         else TmVar fi x (n + d))
+
+tmMap :: (Info -> Int -> Int -> Int -> Term) -> Int -> Term -> Term
+tmMap onvar c (TmVar fi x n) = onvar fi c x n
+tmMap onvar c (TmAbs fi x t) = TmAbs fi x (tmMap onvar (c + 1) t)
+tmMap onvar c (TmApp fi t1 t2) = TmApp fi (tmMap onvar c t1) (tmMap onvar c t2)
+
+{-
+ - substitution
+ -}
+termSubst :: Int -> Term -> Term -> Term
+termSubst j s =
+  tmMap
+    (\fi c x n ->
+       if x == j + c
+         then termShift c s
+         else TmVar fi x n)
+    0
+
+termSubstTop :: Term -> Term -> Term
+termSubstTop s t = termShift (-1) (termSubst 0 (termShift 1 s) t)
+
+{-
+ - simple pretty printer
+ -}
 printTerm :: Term -> IO ()
 printTerm = putStrLn . fmtTerm []
 

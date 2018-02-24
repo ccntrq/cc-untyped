@@ -61,7 +61,8 @@ fmtTerm ctx (TmVar fi x n) =
     else "bad index"
 fmtTerm ctx (TmAbs fi x t) =
   let (ctx', x') = pickFreshName ctx x
-  in "(lambda " ++ x' ++ "." ++ fmtTerm ctx' t ++ ")"
+  in "(λ" ++ x' ++ "." ++ fmtTerm ctx' t ++ ")"
+  -- in "(lambda " ++ x' ++ "." ++ fmtTerm ctx' t ++ ")"
 fmtTerm ctx (TmApp fi t1 t2) =
   "(" ++ fmtTerm ctx t1 ++ " " ++ fmtTerm ctx t2 ++ ")"
 

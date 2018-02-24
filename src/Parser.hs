@@ -31,13 +31,28 @@ parseWith p = runParser p [] "untyped lambda-calculus"
 parse :: String -> Either ParseError Term
 parse = parseWith parseTerm
 
-parseAbs :: LCParser -> LCParser
-parseAbs termParser = do
-  char '\\'
+parseTerm :: LCParser
+parseTerm =
+  chainl1 parseNonApp $ do
+    spaces
+    pos <- getPosition
+    return $ TmApp (infoFrom pos)
+
+parseNonApp :: LCParser
+parseNonApp =
+  parens parseTerm -- (M)
+   <|>
+  parseAbs -- $\lambda$x.M
+   <|>
+  parseVar -- x
+
+parseAbs :: LCParser
+parseAbs = do
+  char '\\' <|> (lambda >> space)
   v <- parseVarName
   modifyState (v :)
   char '.'
-  term <- termParser
+  term <- parseTerm
   modifyState tail
   pos <- getPosition
   return $ TmAbs (infoFrom pos) v term
@@ -56,21 +71,6 @@ findVar v list =
       pos <- getPosition
       return $ TmVar (infoFrom pos) n (length list)
 
-parseNonApp :: LCParser
-parseNonApp =
-  parens parseTerm -- (M)
-   <|>
-  parseAbs parseTerm -- $\lambda$x.M
-   <|>
-  parseVar -- x
-
-parseTerm :: LCParser
-parseTerm =
-  chainl1 parseNonApp $ do
-    space
-    pos <- getPosition
-    return $ TmApp (infoFrom pos)
-
 -- | parser helper for variable names.
 parseVarName :: Parsec String u String
 parseVarName = many1 $ letter <|> char '\''
@@ -78,6 +78,8 @@ parseVarName = many1 $ letter <|> char '\''
 -- | parser helper for parens.
 parens :: Parsec String u a -> Parsec String u a
 parens = between (char '(') (char ')')
+
+lambda = char 'l' >> char 'a' >> char 'm' >> char 'b' >> char 'd' >> char 'a'
 
 -- | A helper to create our info annotations from parsecs SourcePos type
 infoFrom :: SourcePos -> Info

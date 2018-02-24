@@ -26,7 +26,8 @@ library
       base >=4.7 && <5,
       parsec == 3.1.13.0
   exposed-modules:
-      Parser
+      Parser,
+      Term
   other-modules:
       Paths_cc_untyped
   default-language: Haskell2010

@@ -2,10 +2,6 @@ module Parser
   ( parse
   ) where
 
-import           Data.List              (elemIndex)
-import           Text.Parsec            hiding (parse)
-import           Text.Parsec.Combinator (between, chainr1, sepBy1)
-
 {-
    Parser for the untyped lambda calculus.
    The parser is ipmlemented using the Parsec parser library. As a first time
@@ -13,36 +9,11 @@ import           Text.Parsec.Combinator (between, chainr1, sepBy1)
    of the parser is taken from there:
    http://mattwetmore.me/posts/parsing-combinators-with-parser-combinators.html
  -}
-{-|
-   Terms of the untyped lambda calculus. Each term carries an Info annotation
-   with row and col of the token with it.
- -}
-data Term
-  -- |
-  -- Variables carry their de Bruijn indices and the total length of the
-  -- context they appear in. This number is used as consistency check
-  = TmVar Info
-          Int
-          Int
-  -- |
-  -- Abstraction carry a name hint that is used in the pretty printer. A few
-  -- primes might get added to avoid name clashes
-  | TmAbs Info
-          String
-          Term
-  -- | Applications are just two terms callee and an argument
-  | TmApp Info
-          Term
-          Term
-  deriving (Show)
+import           Term
 
-{-|
-  The Info type ise used to carry positional information for debugging purposes
- -}
-data Info = Info
-  { row :: Int
-  , col :: Int
-  } deriving (Show)
+import           Data.List              (elemIndex)
+import           Text.Parsec            hiding (parse)
+import           Text.Parsec.Combinator (between, chainr1, sepBy1)
 
 -- |
 -- An alias used to store the bound variables in a context.

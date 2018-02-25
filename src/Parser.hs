@@ -6,8 +6,9 @@ module Parser
    Parser for the untyped lambda calculus.
    The parser is ipmlemented using the Parsec parser library. As a first time
    user I was happy to find a tutorial using the same book I am reading. Most
-   of the parser is taken from there:
+   of the parser has been taken or slighly modified from there:
    http://mattwetmore.me/posts/parsing-combinators-with-parser-combinators.html
+   https://github.com/wetmore/TAPL-implementations/blob/master/untyped/Parser.hs
  -}
 import           Term
 

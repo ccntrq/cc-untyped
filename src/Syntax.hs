@@ -56,7 +56,7 @@ printTerm = putStrLn . fmtTerm []
 
 fmtTerm :: Context -> Term -> String
 fmtTerm ctx (TmVar fi x n) =
-  if ctxLength ctx == n
+  if ctxLength ctx >= n
     then indexToName fi ctx x
     else "bad index"
 fmtTerm ctx (TmAbs fi x t) =

@@ -1,6 +1,5 @@
 module Core
-  ( eval1
-  , eval
+  ( eval
   , evalWithM
   ) where
 
@@ -14,24 +13,24 @@ isVal :: Term -> Bool
 isVal TmAbs {} = True
 isVal _        = False
 
-eval1 :: Context -> Term -> Either NoRuleApplies Term
-eval1 ctx (TmApp _ (TmAbs _ x t) v)
+eval1 :: Term -> Either NoRuleApplies Term
+eval1 (TmApp _ (TmAbs _ x t) v)
   | isVal v = return $ termSubstTop v t
-eval1 ctx (TmApp fi v t)
+eval1 (TmApp fi v t)
   | isVal v = do
-    t' <- eval1 ctx t
+    t' <- eval1 t
     return $ TmApp fi v t'
-eval1 ctx (TmApp fi t1 t2) = do
-  t1' <- eval1 ctx t1
+eval1 (TmApp fi t1 t2) = do
+  t1' <- eval1 t1
   return $ TmApp fi t1' t2
-eval1 _ _ = Left NoRuleApplies
+eval1 _ = Left NoRuleApplies
 
-eval :: Context -> Term -> Term
-eval ctx t = either (const t) (eval ctx) (eval1 ctx t)
+eval :: Term -> Term
+eval t = either (const t) eval (eval1 t)
 
-evalWithM :: Monad m => (Term -> m a) -> Context -> Term -> m Term
-evalWithM fn ctx t = do
+evalWithM :: Monad m => (Term -> m a) -> Term -> m Term
+evalWithM fn t = do
   fn t
-  case eval1 ctx t of
+  case eval1 t of
     Left NoRuleApplies -> return t
-    Right t'           -> evalWithM fn ctx t'
+    Right t'           -> evalWithM fn t'

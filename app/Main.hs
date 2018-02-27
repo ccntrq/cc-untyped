@@ -5,17 +5,27 @@ import           Parser
 import           Syntax
 import           Term
 
+import           Control.Monad (when)
+import           System.IO
+
+version :: String
+version = "cc-untyped v0.1.0"
+
 main :: IO ()
-main =
-  let terms =
-        [ lcId
-        , iszero ++ c0
-        , iszero ++ "(" ++ prd ++ c1 ++ ")"
-        ,iszero ++  "(" ++ prd ++ "("++ plus ++ c0 ++ c1 ++ "))"
-        ,iszero ++  "(" ++ prd ++ "("++ plus ++ c1 ++ c1 ++ "))"
-        ,iszero ++ "("++ plus ++ c0 ++ c1 ++ ")"
-        ]
-  in mapM_ eval' terms
+main = repl
+
+repl :: IO ()
+repl = do
+  hSetBuffering stdout NoBuffering
+  putStrLn version
+  putStrLn "Welcome to the cc-untyped repl!"
+  putStrLn "Please enter a lambda term or type 'quit' to exit"
+  repl'
+  where
+    repl' = do
+      putStr "λ:"
+      input <- getLine
+      when (input /= "quit") (smallStep input >> repl')
 
 pprint :: String -> IO ()
 pprint = either print printTerm . parse

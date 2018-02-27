@@ -12,9 +12,9 @@ I'm currently reading the book
 by Benjamin C. Pierce which introduces its readers to basic concepts of
 programming languages and type systems. In the course of the book several
 implementations of different programming languages are discussed by the author.
-A introduction to the untyped lambda calculus aswell as an interpreter
-implementation in [OCaml](https://ocaml.org/ "OCaml") presented in the first
-part of the book.
+An introduction to the untyped lambda calculus aswell as an interpreter
+implementation in [OCaml](https://ocaml.org/ "OCaml") are presented in the
+first part of the book.
 
 To improve my [Haskell](https://www.haskell.org/ "Haskell") knowledge, to have
 a playground for experimenting with different reduction strategies and to solve

@@ -1,6 +1,5 @@
 # cc-untyped
 ## A Haskell implementation of the untyped lambda calculus
----
 
 ### Status [WIP]
 
@@ -57,7 +56,7 @@ Done.
 #### Build
 
 This project uses [stack](http://haskellstack.org "The Haskell Tool Stack") to
-install its dependencies and to build the interpretere binary. To build an
+install its dependencies and to build the interpretere binary. To build and
 install simply run:
 ```
 stack setup

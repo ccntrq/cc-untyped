@@ -49,7 +49,7 @@ parseNonApp =
 
 parseAbs :: LCParser
 parseAbs = do
-  char '\\'
+  char '\\' <|> char 'λ'
   v <- parseVarName
   modifyState (v :)
   char '.'

@@ -1,0 +1,32 @@
+name:                cc-untyped
+version:             0.1.0
+github:              "ccntrq/cc-untyped"
+description:         Please see the README on Github at <https://github.com/ccntrq/cc-untyped#readme>
+license:             BSD3
+author:              "Alexander Pankoff"
+maintainer:          "ccntrq@screenri.de"
+copyright:           "2018 Alexander Pankoff"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+- src/Lexer.x
+- src/Parser.y
+
+dependencies:
+- base >= 4.7 && < 5
+- array
+
+library:
+  source-dirs: src
+
+executables:
+  cc-untyped-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - cc-untyped

@@ -63,7 +63,7 @@ mkVarExp name =
                      Just index -> Var name index (length ctx)
 
 parserError :: Token -> Alex a
-parserError at = do
-  ust <- getUserState
-  fail $ "Error Parsing at: " ++ (show at) ++ (show ust)
+parserError (Token t (AlexPn _ l c) lexeme) =
+  fail $ "parsing error at line " ++ (show l) ++ ", column "  ++ (show c) ++
+         ": '" ++ lexeme ++ "' " ++ (show t)
 }

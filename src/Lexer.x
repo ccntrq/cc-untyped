@@ -1,5 +1,5 @@
 {
-module Lexer (evalAlex, getState, getUserState, runAlex, Alex, AlexUserState(..), TokenType(..), lexer, lexIt, Token(..), AlexState(..),addLog)  where
+module Lexer (AlexPosn(..), evalAlex, getState, getUserState, runAlex, Alex, AlexUserState(..), TokenType(..), lexer, lexIt, Token(..), AlexState(..),addLog)  where
 import Debug.Trace
 }
 
@@ -20,7 +20,7 @@ state:-
 {
 
 -- a Token stores its TokenType, position and the lexed characters
-data Token = Token TokenType AlexPosn (Maybe String) deriving(Eq,Show)
+data Token = Token TokenType AlexPosn String deriving(Eq,Show)
 
 data TokenType
   = Iden String
@@ -60,14 +60,13 @@ alexInitUserState = AlexUserState 1 [] []
 
 
 alexEOF :: Alex Token
--- TODO: last token pos instead of undefined?
-alexEOF = return $ Token EOF undefined Nothing
+alexEOF = return $ Token EOF undefined []
 
 addToken :: TokenType -> AlexInput -> Int -> Alex Token
 -- for 'Iden's we have to replace the dummy string with the real lexed name here
-addToken (Iden _) (p, _, _, str) len = return $ Token (Iden lexed) p (Just lexed)
+addToken (Iden _) (p, _, _, str) len = return $ Token (Iden lexed) p lexed
   where lexed = take len str
-addToken t (p, _, _, str) len = return $ Token t p (Just $ take len str)
+addToken t (p, _, _, str) len = return $ Token t p (take len str)
 
 -- Interface
 

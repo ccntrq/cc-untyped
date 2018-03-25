@@ -3,6 +3,7 @@ module Core
   , evalWithM
   , callByName
   , normalOrder
+  , Reducer
   ) where
 
 import           Exp
@@ -46,7 +47,10 @@ evalWithM fn t = do
  - 'Demonstrating Lambda Calculus Reduction' by Peter Sestoft. You can find the
  - paper at https://www.itu.dk/people/sestoft/papers/sestoft-lamreduce.pdf
  -}
-callByName :: Exp -> Exp
+
+type Reducer = Exp -> Exp
+
+callByName :: Reducer
 callByName x@Var {} = x
 callByName (Abs x e) = Abs x e
 callByName (App e1 e2) =
@@ -54,7 +58,7 @@ callByName (App e1 e2) =
     Abs x e -> callByName (expSubstTop e2 e)
     e1'     -> App e1' e2
 
-normalOrder :: Exp -> Exp
+normalOrder :: Reducer
 normalOrder x@Var {} = x
 normalOrder (Abs x e) = Abs x (normalOrder e)
 normalOrder (App e1 e2) =

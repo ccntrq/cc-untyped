@@ -19,12 +19,16 @@ import Data.Maybe
 			'.'     { Token Dot _ _       }
 			'('     { Token LPar _ _      }
 			')'     { Token RPar _ _      }
+			let     { Token Let _ _       }
+			in      { Token In _ _        }
+			'='     { Token Equ _ _       }
 
 
 %%
 
-Exp : '\\' iden '.' Exp    {% mkAbsExp $2 $4 }
-    | AppExp               {% return $1      }
+Exp : '\\' iden '.' Exp        {% mkAbsExp $2 $4 }
+    | let iden '=' Exp in Exp  {% desugarLet $2 $4 $6 }
+    | AppExp                   {% return $1      }
 
 AppExp : AppExp AtomExp    {% mkAppExp $1 $2 }
        | AtomExp           {% return $1      }
@@ -61,6 +65,12 @@ mkVarExp name =
   return $ \ctx -> case elemIndex name ctx of
                      Nothing -> error $ "Variable not bound: " ++ name -- XXX
                      Just index -> Var name index (length ctx)
+
+-- we desugar let bindings into the core calculus
+-- from: let name = e1 in e2
+-- to:   (\name. e2) e1
+desugarLet :: String -> (Context -> Exp) -> (Context -> Exp) -> Alex (Context -> Exp)
+desugarLet name e1 e2 = return $ \ctx -> App (Abs name (e2 (name:ctx)))(e1 ctx)
 
 parserError :: Token -> Alex a
 parserError (Token t (AlexPn _ l c) lexeme) =

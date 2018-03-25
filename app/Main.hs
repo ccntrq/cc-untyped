@@ -1,17 +1,49 @@
 module Main where
 
+import           Core
 import           Lexer
 import           Parser
-import           Core
 
-import           Control.Monad (when)
+import           Control.Monad      (unless)
+
+import           System.Directory   (doesFileExist)
+import           System.Environment (getArgs, getProgName)
 import           System.IO
 
 version :: String
 version = "cc-untyped v0.2.0"
 
+usage :: String -> String
+usage progname =
+  "Usage: " ++
+  progname ++
+  " [-h] files?\n" ++
+  "# " ++
+  version ++
+  "\n" ++
+  "You can pass a list of files to execute them sequentially or invoke the\n" ++
+  "interpreter without any args to enter a repl"
+
 main :: IO ()
-main = repl
+main = do
+  args <- getArgs
+  dispatch args
+
+dispatch :: [String] -> IO ()
+dispatch ["-h"] = getProgName >>= putStrLn . usage
+dispatch []     = repl
+dispatch files  = runFiles files
+
+runFiles :: [String] -> IO ()
+runFiles =
+  mapM_ (\f -> putStrLn ("Starting execution of file: " ++ f) >> runFile f)
+
+runFile :: String -> IO ()
+runFile file = do
+  doesExist <- doesFileExist file
+  unless doesExist (error $ "File does not exist: " ++ file)
+  src <- readFile file
+  runSource src
 
 repl :: IO ()
 repl = do
@@ -24,7 +56,7 @@ repl = do
     repl' = do
       putStr "λ:"
       input <- getLine
-      when (input /= "quit") (runSource input >> repl')
+      unless (input == "quit") (runSource input >> repl')
 
 runSource :: String -> IO ()
 runSource src =

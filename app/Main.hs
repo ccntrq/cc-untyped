@@ -13,7 +13,7 @@ import           System.Environment (getArgs, getProgName)
 import           System.IO
 
 version :: String
-version = "cc-untyped v0.2.0"
+version = "cc-untyped v0.3.0"
 
 usage :: String -> String
 usage progname =

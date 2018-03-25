@@ -1,10 +1,12 @@
 module Core
   ( eval
   , evalWithM
+  , callByName
+  , normalOrder
   ) where
 
-import           Syntax
 import           Exp
+import           Syntax
 
 data NoRuleApplies =
   NoRuleApplies
@@ -38,3 +40,26 @@ evalWithM fn t = do
   case eval1 t of
     Left NoRuleApplies -> return ()
     Right t'           -> evalWithM fn t'
+
+{-
+ - The following reducers are implemented based on algorithms from the paper
+ - 'Demonstrating Lambda Calculus Reduction' by Peter Sestoft. You can find the
+ - paper at https://www.itu.dk/people/sestoft/papers/sestoft-lamreduce.pdf
+ -}
+callByName :: Exp -> Exp
+callByName x@Var {} = x
+callByName (Abs x e) = Abs x e
+callByName (App e1 e2) =
+  case callByName e1 of
+    Abs x e -> callByName (expSubstTop e2 e)
+    e1'     -> App e1' e2
+
+normalOrder :: Exp -> Exp
+normalOrder x@Var {} = x
+normalOrder (Abs x e) = Abs x (normalOrder e)
+normalOrder (App e1 e2) =
+  case callByName e1 of
+    Abs x e -> normalOrder (expSubstTop e2 e)
+    e1' ->
+      let e1'' = normalOrder e1'
+      in App e1'' (normalOrder e2)

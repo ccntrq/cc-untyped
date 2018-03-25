@@ -10,12 +10,15 @@ $alpha = [a-zA-Z]       -- alphabetic characters
 state:-
 
 <0>       $whitespace+        ;
-<0>       "#".*	   	       ;
+<0>       "#".*	   	          ;
+<0>       let                 { addToken Let      }
+<0>       in                  { addToken In       }
 <0>       $alpha [$alpha \']* { addToken (Iden "")}  -- add dummy string
-<0>       [\\]                { addToken Lam}
-<0>       [\.]                { addToken Dot}
-<0>       [\(]                { addToken LPar }
-<0>       [\)]                { addToken RPar  }
+<0>       [\\]                { addToken Lam      }
+<0>       [\.]                { addToken Dot      }
+<0>       [\(]                { addToken LPar     }
+<0>       [\)]                { addToken RPar     }
+<0>       [\=]                { addToken Equ      }
 
 {
 
@@ -28,6 +31,9 @@ data TokenType
   | Dot
   | LPar
   | RPar
+  | Let
+  | In
+  | Equ
   | EOF
   deriving (Eq,Show)
 

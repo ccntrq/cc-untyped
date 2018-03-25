@@ -1,8 +1,10 @@
 module Main where
 
 import           Core
+import           Exp
 import           Lexer
 import           Parser
+import           Syntax
 
 import           Control.Monad      (unless)
 
@@ -23,6 +25,9 @@ usage progname =
   "\n" ++
   "You can pass a list of files to execute them sequentially or invoke the\n" ++
   "interpreter without any args to enter a repl"
+
+freeVariables :: Context
+freeVariables = ["a", "b", "c", "d"] -- allowed free variables
 
 main :: IO ()
 main = do
@@ -60,8 +65,8 @@ repl = do
 
 runSource :: String -> IO ()
 runSource src =
-  case evalAlex src parseIt of
+  case evalAlex src (parseIt freeVariables) of
     Left e -> print e
     Right (_, e) -> do
-      evalWithM (\e' -> putStrLn $ "reducing: " ++ show e') e
+      evalWithM (\e' -> (putStrLn $ "reducing: " ++ show e') >> pprint freeVariables e') e
       putStrLn "Done."

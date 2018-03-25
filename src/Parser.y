@@ -51,8 +51,8 @@ AtomExp : iden             {% mkVarExp $1    }
  - build the ast.
  -}
 
-parseIt :: Alex Exp
-parseIt = parse `ap` return ["a", "b", "c", "d"] -- allowed free variables
+parseIt :: Context -> Alex Exp
+parseIt ctx = parse `ap` return ctx
 
 mkAbsExp :: String -> (Context -> Exp) -> Alex (Context -> Exp)
 mkAbsExp param body = return $ \ctx -> let ctx' = param:ctx in Abs param (body ctx')

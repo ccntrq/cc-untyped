@@ -14,6 +14,9 @@ data Binding =
 
 type CContext = [(String, Binding)]
 
+-- XXX: remove me
+cctxtfromctx = map(\x-> (x,NameBind))
+
 {-
  - shifting
  -}
@@ -51,8 +54,8 @@ expSubstTop s t = expShift (-1) (expSubst 0 (expShift 1 s) t)
 {-
  - simple pretty printer
  -}
-pprint :: Exp -> IO ()
-pprint = putStrLn . fmtExp []
+pprint :: [String] -> Exp -> IO ()
+pprint ctx = putStrLn . fmtExp (cctxtfromctx ctx)
 
 fmtExp :: CContext -> Exp -> String
 fmtExp ctx (Var _ x n) =
@@ -61,7 +64,8 @@ fmtExp ctx (Var _ x n) =
     else "bad index"
 fmtExp ctx (Abs x t) =
   let (ctx', x') = pickFreshName ctx x
-  in "(λ" ++ x' ++ "." ++ fmtExp ctx' t ++ ")"
+  in "(\\" ++ x' ++ "." ++ fmtExp ctx' t ++ ")"
+  -- in "(λ" ++ x' ++ "." ++ fmtExp ctx' t ++ ")"
   -- in "(lambda " ++ x' ++ "." ++ fmtExp ctx' t ++ ")"
 fmtExp ctx (App t1 t2) =
   "(" ++ fmtExp ctx t1 ++ " " ++ fmtExp ctx t2 ++ ")"
